@@ -744,6 +744,8 @@ double interp_CO_gas_cube(double x, double y, double z, double H2toCO, GasCubeDa
   gxi = int(gx); gyi = int(gy); gzi = int(gz); // find truncated grid coords
   tx = gx - gxi; ty = gy - gyi; tz = gz-gzi; // find mantissa of grid coords
 
+  cout << " gx,gy,gz: " << gx << " " << gy << " " << gz << endl; 
+
   // Find the weighting coefficients for trilinear interpolation
   const double c000 = gcd.Data[get_gas_cube_coords(gxi, gyi, gzi,gcd.NAXIS1,gcd.NAXIS2,gcd.NAXIS3)];
   const double c100 = gcd.Data[get_gas_cube_coords(gxi + 1, gyi, gzi,gcd.NAXIS1,gcd.NAXIS2,gcd.NAXIS3)];
@@ -754,7 +756,8 @@ double interp_CO_gas_cube(double x, double y, double z, double H2toCO, GasCubeDa
   const double c011 = gcd.Data[get_gas_cube_coords(gxi, gyi + 1, gzi + 1,gcd.NAXIS1,gcd.NAXIS2,gcd.NAXIS3)];
   const double c111 = gcd.Data[get_gas_cube_coords(gxi + 1, gyi + 1, gzi + 1,gcd.NAXIS1,gcd.NAXIS2,gcd.NAXIS3)];
 
-  double H2_val = H2toCO/kpc2cm*((1-tx)*(1-ty)*(1-tz)*c000 +
+
+  double H2_val = H2toCO*((1-tx)*(1-ty)*(1-tz)*c000 +
             tx*(1-ty)*(1-tz)*c100 +
             (1-tx)*ty*(1-tz)*c010 +
             tx*ty*(1-tz)*c110 +
@@ -795,7 +798,7 @@ double interp_CO_gas_cube_rlb(double r, double l, double b, double H2toCO, GasCu
   const double c111 = gcd.Data[get_gas_cube_coords(gxi + 1, gyi + 1, gzi + 1,gcd.NAXIS1,gcd.NAXIS2,gcd.NAXIS3)];
 
   // Return the interpolated result
-  double H2_val = H2toCO/kpc2cm*((1-tx)*(1-ty)*(1-tz)*c000 +
+  double H2_val = H2toCO*((1-tx)*(1-ty)*(1-tz)*c000 +
             tx*(1-ty)*(1-tz)*c100 +
             (1-tx)*ty*(1-tz)*c010 +
             tx*ty*(1-tz)*c110 +

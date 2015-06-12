@@ -186,7 +186,6 @@ int Galprop::Run(const string& galdefPath,
 
   int stat;
 
-
     /* Eric Carlson 10/24/2014 */
       
     if (galdef.nHI_model==2){

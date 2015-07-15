@@ -744,8 +744,6 @@ double interp_CO_gas_cube(double x, double y, double z, double H2toCO, GasCubeDa
   gxi = int(gx); gyi = int(gy); gzi = int(gz); // find truncated grid coords
   tx = gx - gxi; ty = gy - gyi; tz = gz-gzi; // find mantissa of grid coords
 
-  cout << " gx,gy,gz: " << gx << " " << gy << " " << gz << endl; 
-
   // Find the weighting coefficients for trilinear interpolation
   const double c000 = gcd.Data[get_gas_cube_coords(gxi, gyi, gzi,gcd.NAXIS1,gcd.NAXIS2,gcd.NAXIS3)];
   const double c100 = gcd.Data[get_gas_cube_coords(gxi + 1, gyi, gzi,gcd.NAXIS1,gcd.NAXIS2,gcd.NAXIS3)];

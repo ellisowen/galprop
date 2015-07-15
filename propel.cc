@@ -1687,7 +1687,7 @@ int Galprop::propel(Particle& particle) {
 
 // CONVECTION                                                      AWS20010330
 
-    if (galdef.convection) {
+    if (galdef.convection==1) {
      
       for (iz = 0; iz < particle.n_zgrid; ++iz) { // numerator = abs convection velocity in cm s^-1
 		
@@ -1756,6 +1756,61 @@ int Galprop::propel(Particle& particle) {
       }   //iz
       
     }
+
+// Radial CONVECTION                                                      ECC20150715
+
+    if (galdef.convection==4) {
+     
+     for (ix = 0; ix < particle.n_xgrid; ++ix) { // numerator = abs convection velocity in cm s^-1
+      for (iy = 0; iy < particle.n_ygrid; ++iy) { // numerator = abs convection velocity in cm s^-1
+        for (iz = 0; iz < particle.n_zgrid; ++iz) { // numerator = abs convection velocity in cm s^-1
+    
+
+
+  /* replaced by v_conv from array AWS20131008
+  double az1 = (particle.z[iz] > 0.) ? 
+                     (galdef.v0_conv + galdef.dvdz_conv*fabs(particle.z[iz-1]))*1.e5/particle.dz/kpc2cm: 0.; //AWS20110330 removed dt
+
+  double az2 = (galdef.v0_conv + galdef.dvdz_conv*fabs(particle.z[iz]  ))*1.e5/particle.dz/kpc2cm;     //AWS20110330 removed dt
+  
+  double az3 = (particle.z[iz] < 0.) ? 
+                     (galdef.v0_conv + galdef.dvdz_conv*fabs(particle.z[iz+1]))*1.e5/particle.dz/kpc2cm: 0.;//AWS20110330 removed dt
+  */
+
+
+  double ax1 = (particle.x[ix] > 0.) ? fabs(particle.v_conv_x.d3[0][0][ix-1].s[0])*1.e5/particle.dx/kpc2cm: 0.; //AWS20131008
+  double ax2 =                         fabs(particle.v_conv_x.d3[0][0][ix  ].s[0])*1.e5/particle.dx/kpc2cm;     //AWS20131008
+  double ax3 = (particle.x[ix] < 0.) ? fabs(particle.v_conv_x.d3[0][0][ix+1].s[0])*1.e5/particle.dx/kpc2cm: 0.; //AWS20131008
+
+  double ay1 = (particle.y[iy] > 0.) ? fabs(particle.v_conv_y.d3[0][0][iy-1].s[0])*1.e5/particle.dy/kpc2cm: 0.; //AWS20131008
+  double ay2 =                         fabs(particle.v_conv_y.d3[0][0][iy  ].s[0])*1.e5/particle.dy/kpc2cm;     //AWS20131008
+  double ay3 = (particle.y[iy] < 0.) ? fabs(particle.v_conv_y.d3[0][0][iy+1].s[0])*1.e5/particle.dy/kpc2cm: 0.; //AWS20131008
+
+  double az1 = (particle.z[iz] > 0.) ? fabs(particle.v_conv_z.d3[0][0][iz-1].s[0])*1.e5/particle.dz/kpc2cm: 0.; //AWS20131008
+  double az2 =                         fabs(particle.v_conv_z.d3[0][0][iz  ].s[0])*1.e5/particle.dz/kpc2cm;     //AWS20131008
+  double az3 = (particle.z[iz] < 0.) ? fabs(particle.v_conv_z.d3[0][0][iz+1].s[0])*1.e5/particle.dz/kpc2cm: 0.; //AWS20131008
+
+      ax1 *= dt; //AWS20110330
+      ax2 *= dt; //AWS20110330
+      ax3 *= dt; //AWS20110330
+
+      ay1 *= dt; //AWS20110330
+      ay2 *= dt; //AWS20110330
+      ay3 *= dt; //AWS20110330
+
+      az1 *= dt; //AWS20110330
+      az2 *= dt; //AWS20110330
+      az3 *= dt; //AWS20110330
+       
+      }   //iz
+    } // iy
+  } // ix
+      
+    }
+
+
+
+
 
 // DIFFUSIVE REACCELERATION   IMOS20020329
 

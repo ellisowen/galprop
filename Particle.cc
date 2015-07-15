@@ -229,6 +229,12 @@ int Particle::delete_transport_arrays()
    Dpp             .delete_array();
    v_conv          .delete_array();
    dvdz_conv       .delete_array(); //AWS20131008
+   if(n_spatial_dimensions==3)
+   {
+      v_conv_x          .delete_array();
+      v_conv_y          .delete_array();
+      v_conv_z          .delete_array();
+   }
    return 0;
 }
 
@@ -269,6 +275,9 @@ int Particle::create_transport_arrays()
       Dzz                        .init(n_xgrid, n_ygrid, n_zgrid, n_pgrid); //AWS20131017
       Dpp                        .init(n_xgrid, n_ygrid, n_zgrid, n_pgrid);
       v_conv                     .init(n_xgrid, n_ygrid, n_zgrid, n_pgrid);
+      v_conv_x                   .init(n_xgrid, n_ygrid, n_zgrid, n_pgrid);
+      v_conv_y                   .init(n_xgrid, n_ygrid, n_zgrid, n_pgrid);
+      v_conv_z                   .init(n_xgrid, n_ygrid, n_zgrid, n_pgrid);
       dvdz_conv                  .init(n_xgrid, n_ygrid, n_zgrid, n_pgrid); //AWS20131008
    } // 3D
 
@@ -469,6 +478,12 @@ Particle::Particle(const Particle &particle)
    Dzz      = particle.Dzz;       //AWS20131017
    Dpp      = particle.Dpp;
    v_conv   = particle.   v_conv;
+   if(n_spatial_dimensions==3)
+   {
+      v_conv_x   = particle.   v_conv_x;
+      v_conv_y   = particle.   v_conv_y;
+      v_conv_z   = particle.   v_conv_z;
+   }  
    dvdz_conv= particle.dvdz_conv; //AWS20131008
 }
 

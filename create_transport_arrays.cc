@@ -579,7 +579,7 @@ int Galprop::create_transport_arrays(Particle &particle)
       for(int ix=0; ix<particle.n_xgrid; ++ix)
 	for(int iy=0; iy<particle.n_ygrid; ++iy)
 	  for(int iz=0; iz<particle.n_zgrid; ++iz)
-	    for(int ip=particle.n_pgrid-1; ip>=0; --ip) 
+      for(int ip=particle.n_pgrid-1; ip>=0; --ip) 
 	      {
 	       if(galdef.convection==1) //AWS20130320
 	       {
@@ -599,7 +599,7 @@ int Galprop::create_transport_arrays(Particle &particle)
 
 	      if(galdef.convection==3) // smooth increase from zero at z=0 to v0_conv at large z. 0.5*v0_conv at z0_conv  AWS20130429
               {
-                                                      particle.v_conv.d3[ix][iy][iz].s[ip] =  galdef.v0_conv * 0.5 * (1.0 + tanh( 4.0*abs(particle.z[iz]/galdef.z0_conv) - 4.0) );
+                particle.v_conv.d3[ix][iy][iz].s[ip] =  galdef.v0_conv * 0.5 * (1.0 + tanh( 4.0*abs(particle.z[iz]/galdef.z0_conv) - 4.0) );
 			    if(particle.z[iz] < 0.)   particle.v_conv.d3[ix][iy][iz].s[ip]*= -1.; // velocity negative below plane 
 
 
@@ -608,6 +608,22 @@ int Galprop::create_transport_arrays(Particle &particle)
 	    
               }
 
+        if(galdef.convection==4) // constant radial (3D) wind until fermi dirac style shutoff
+            {
+
+              double r3 = sqrt(particle.x[ix]*particle.x[ix] + particle.y[iy]*particle.y[iy] + particle.z[iz]*particle.z[iz]);
+              // Shutoff with fermi dirac distribution of boundary 200 pc and and 2kpc stall height
+              double vr = galdef.v0_conv * 1/(exp((r3-2.)/.2)+1);
+
+              double v_conv_x = particle.x[ix]/r3*vr;
+              double v_conv_y = particle.y[iy]/r3*vr;
+              double v_conv_z = particle.z[iz]/r3*vr;
+
+              particle.v_conv_x.d3[ix][iy][iz].s[ip] =  v_conv_x ;
+              particle.v_conv_y.d3[ix][iy][iz].s[ip] =  v_conv_y ;
+              particle.v_conv_z.d3[ix][iy][iz].s[ip] =  v_conv_z ;
+    
+            }
 
 	      }  // p
     } 

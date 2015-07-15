@@ -71,6 +71,9 @@ class Particle {
   Distribution Dpp ;    // momentum diffusion coefficient
 
   Distribution    v_conv;  // convection velocity in z-direction
+  Distribution    v_conv_x;  // convection velocity in z-direction
+  Distribution    v_conv_y;  // convection velocity in z-direction
+  Distribution    v_conv_z;  // convection velocity in z-direction
   Distribution dvdz_conv;  // derivative of convection velocity in z-direction AWS20131008
   
   //interface functions prototypes

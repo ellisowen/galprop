@@ -1757,51 +1757,96 @@ int Galprop::propel(Particle& particle) {
       
     }
 
-// Radial CONVECTION                                                      ECC20150715
-
+    // Radial CONVECTION                                                      ECC20150715
     if (galdef.convection==4) {
      
      for (ix = 0; ix < particle.n_xgrid; ++ix) { // numerator = abs convection velocity in cm s^-1
       for (iy = 0; iy < particle.n_ygrid; ++iy) { // numerator = abs convection velocity in cm s^-1
         for (iz = 0; iz < particle.n_zgrid; ++iz) { // numerator = abs convection velocity in cm s^-1
     
+          double ax1 = (particle.x[ix] > 0.) ? fabs(particle.v_conv_x.d3[ix-1][iy][iz].s[0])*1.e5/particle.dx/kpc2cm: 0.; 
+          double ax2 =                         fabs(particle.v_conv_x.d3[ix  ][iy][iz].s[0])*1.e5/particle.dx/kpc2cm;     
+          double ax3 = (particle.x[ix] < 0.) ? fabs(particle.v_conv_x.d3[ix+1][iy][iz].s[0])*1.e5/particle.dx/kpc2cm: 0.; 
+
+          double ay1 = (particle.y[iy] > 0.) ? fabs(particle.v_conv_y.d3[ix][iy-1][iz].s[0])*1.e5/particle.dy/kpc2cm: 0.; 
+          double ay2 =                         fabs(particle.v_conv_y.d3[ix][iy  ][iz].s[0])*1.e5/particle.dy/kpc2cm;     
+          double ay3 = (particle.y[iy] < 0.) ? fabs(particle.v_conv_y.d3[ix][iy+1][iz].s[0])*1.e5/particle.dy/kpc2cm: 0.; 
+
+          double az1 = (particle.z[iz] > 0.) ? fabs(particle.v_conv_z.d3[ix][iy][iz-1].s[0])*1.e5/particle.dz/kpc2cm: 0.; 
+          double az2 =                         fabs(particle.v_conv_z.d3[ix][iy][iz  ].s[0])*1.e5/particle.dz/kpc2cm;     
+          double az3 = (particle.z[iz] < 0.) ? fabs(particle.v_conv_z.d3[ix][iy][iz+1].s[0])*1.e5/particle.dz/kpc2cm: 0.; 
+
+          // Galactic center is a special case. 
+          if ( particle.z[iz]==0 && particle.y[iy]==0 && particle.x[ix]==0) {
+            ax1 = fabs(particle.v_conv_x.d3[ix-1][iy][iz].s[0])*1.e5/particle.dx/kpc2cm;  
+            ax2 = fabs(particle.v_conv_x.d3[ix][iy][iz].s[0])*1.e5/particle.dx/kpc2cm; 
+            ax3 = fabs(particle.v_conv_x.d3[ix+1][iy][iz].s[0])*1.e5/particle.dx/kpc2cm; 
+
+            ay1 = fabs(particle.v_conv_x.d3[ix][iy-1][iz].s[0])*1.e5/particle.dy/kpc2cm;  
+            ay2 = fabs(particle.v_conv_x.d3[ix][iy][iz].s[0])*1.e5/particle.dy/kpc2cm; 
+            ay3 = fabs(particle.v_conv_x.d3[ix][iy+1][iz].s[0])*1.e5/particle.dy/kpc2cm; 
+
+            az1 = fabs(particle.v_conv_x.d3[ix][iy][iz-1].s[0])*1.e5/particle.dz/kpc2cm;  
+            az2 = fabs(particle.v_conv_x.d3[ix][iy][iz].s[0])*1.e5/particle.dz/kpc2cm; 
+            az3 = fabs(particle.v_conv_x.d3[ix][iy][iz+1].s[0])*1.e5/particle.dz/kpc2cm; 
+          }
+
+          ax1 *= dt;
+          ax2 *= dt; 
+          ax3 *= dt; 
+
+          ay1 *= dt; 
+          ay2 *= dt; 
+          ay3 *= dt; 
+
+          az1 *= dt; 
+          az2 *= dt; 
+          az3 *= dt; 
+         
+          if (isnan(ax2)){
+          cout  << " alpha1_x, alpha2_x, alpha3_x before ----- ax1,ax2,ax3:" << alpha1_x.d3[ix][iy][iz].s[ip] << " " << alpha2_x.d3[ix][iy][iz].s[ip]<< " " << alpha3_x.d3[ix][iy][iz].s[ip] << " " <<ax1 << " " <<ax2 << " " <<ax3 << endl;
+          cout << "x, y, z: " << particle.x[ix] << " " << particle.y[iy] << " " << particle.z[iz] <<  endl; 
+          cout << "particle.v_convx: " <<  fabs(particle.v_conv_x.d3[ix][iy][iz].s[0]) << endl;
 
 
-  /* replaced by v_conv from array AWS20131008
-  double az1 = (particle.z[iz] > 0.) ? 
-                     (galdef.v0_conv + galdef.dvdz_conv*fabs(particle.z[iz-1]))*1.e5/particle.dz/kpc2cm: 0.; //AWS20110330 removed dt
-
-  double az2 = (galdef.v0_conv + galdef.dvdz_conv*fabs(particle.z[iz]  ))*1.e5/particle.dz/kpc2cm;     //AWS20110330 removed dt
-  
-  double az3 = (particle.z[iz] < 0.) ? 
-                     (galdef.v0_conv + galdef.dvdz_conv*fabs(particle.z[iz+1]))*1.e5/particle.dz/kpc2cm: 0.;//AWS20110330 removed dt
-  */
+          }
 
 
-  double ax1 = (particle.x[ix] > 0.) ? fabs(particle.v_conv_x.d3[0][0][ix-1].s[0])*1.e5/particle.dx/kpc2cm: 0.; //AWS20131008
-  double ax2 =                         fabs(particle.v_conv_x.d3[0][0][ix  ].s[0])*1.e5/particle.dx/kpc2cm;     //AWS20131008
-  double ax3 = (particle.x[ix] < 0.) ? fabs(particle.v_conv_x.d3[0][0][ix+1].s[0])*1.e5/particle.dx/kpc2cm: 0.; //AWS20131008
+          for (ip = 0; ip < particle.n_pgrid-1; ++ip) {
+            alpha1_x.d3[ix][iy][iz].s[ip] += ax1;                                      
+            alpha1_y.d3[ix][iy][iz].s[ip] += ay1;                                      
+            alpha1_z.d3[ix][iy][iz].s[ip] += az1;     
 
-  double ay1 = (particle.y[iy] > 0.) ? fabs(particle.v_conv_y.d3[0][0][iy-1].s[0])*1.e5/particle.dy/kpc2cm: 0.; //AWS20131008
-  double ay2 =                         fabs(particle.v_conv_y.d3[0][0][iy  ].s[0])*1.e5/particle.dy/kpc2cm;     //AWS20131008
-  double ay3 = (particle.y[iy] < 0.) ? fabs(particle.v_conv_y.d3[0][0][iy+1].s[0])*1.e5/particle.dy/kpc2cm: 0.; //AWS20131008
+            alpha2_x.d3[ix][iy][iz].s[ip] += ax2;                                      
+            alpha2_y.d3[ix][iy][iz].s[ip] += ay2;                                      
+            alpha2_z.d3[ix][iy][iz].s[ip] += az2;
 
-  double az1 = (particle.z[iz] > 0.) ? fabs(particle.v_conv_z.d3[0][0][iz-1].s[0])*1.e5/particle.dz/kpc2cm: 0.; //AWS20131008
-  double az2 =                         fabs(particle.v_conv_z.d3[0][0][iz  ].s[0])*1.e5/particle.dz/kpc2cm;     //AWS20131008
-  double az3 = (particle.z[iz] < 0.) ? fabs(particle.v_conv_z.d3[0][0][iz+1].s[0])*1.e5/particle.dz/kpc2cm: 0.; //AWS20131008
+            alpha3_x.d3[ix][iy][iz].s[ip] += ax3;                                      
+            alpha3_y.d3[ix][iy][iz].s[ip] += ay3;                                      
+            alpha3_z.d3[ix][iy][iz].s[ip] += az3;                                                                            
 
-      ax1 *= dt; //AWS20110330
-      ax2 *= dt; //AWS20110330
-      ax3 *= dt; //AWS20110330
 
-      ay1 *= dt; //AWS20110330
-      ay2 *= dt; //AWS20110330
-      ay3 *= dt; //AWS20110330
 
-      az1 *= dt; //AWS20110330
-      az2 *= dt; //AWS20110330
-      az3 *= dt; //AWS20110330
-       
+          // //======================================================================
+          // //debug ---------------------
+
+          // double vv = 100; 
+          // if (particle.z[iz] < 0){
+          //   vv = -100;
+          // }
+            
+          // double az1_b = (particle.z[iz] > 0.) ? vv*1.e5/particle.dz/kpc2cm: 0.; //AWS20131008
+          // double az2_b =                         vv*1.e5/particle.dz/kpc2cm;     //AWS20131008
+          // double az3_b = (particle.z[iz] < 0.) ? vv*1.e5/particle.dz/kpc2cm: 0.; //AWS20131008
+          
+          // az1_b *= dt; 
+          // az2_b *= dt; 
+          // az3_b *= dt; 
+
+          // cout  << " az1_b, ... , az1 :" << az1_b << " " << az2_b<< " " << az3_b << " " <<az1 << " " <<az2 << " " <<az3 << endl;
+          // //debug ---------------------
+
+          } // ip 
       }   //iz
     } // iy
   } // ix

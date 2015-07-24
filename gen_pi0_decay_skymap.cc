@@ -205,9 +205,9 @@ int Galprop::gen_pi0_decay_skymap() {
                     
                     if ( galdef.gamma_rays==2 ) { // separate skymaps for HI, H2 Gulli20070810
                         galaxy.pi0_decay_H2R_hp_skymap[i_Ring][co][iEgamma] += emiss_H2[i_Ring][iEgamma] *w_H2;
-                        if ( isnan ( galaxy.pi0_decay_H2R_hp_skymap[i_Ring][co][iEgamma] ) ) cout<<"skymap H2 nan: "<<i_Ring<<", "<<iEgamma<<", ("<<l<<","<<b<<")"<<endl;
-                        if ( isnan ( emiss_H2[i_Ring][iEgamma] ) ) cout<<"emiss_H2 nan: "<<i_Ring<<", "<<iEgamma<<", ("<<l<<","<<b<<")"<<endl;
-                        if ( isnan ( emiss_HI[i_Ring][iEgamma] ) ) cout<<"emiss_HI nan: "<<i_Ring<<", "<<iEgamma<<", ("<<l<<","<<b<<")"<<endl;
+                        //if ( isnan ( galaxy.pi0_decay_H2R_hp_skymap[i_Ring][co][iEgamma] ) ) cout<<"skymap H2 nan: "<<i_Ring<<", "<<iEgamma<<", ("<<l<<","<<b<<")"<<endl;
+                        //if ( isnan ( emiss_H2[i_Ring][iEgamma] ) ) cout<<"emiss_H2 nan: "<<i_Ring<<", "<<iEgamma<<", ("<<l<<","<<b<<")"<<endl;
+                        //if ( isnan ( emiss_HI[i_Ring][iEgamma] ) ) cout<<"emiss_HI nan: "<<i_Ring<<", "<<iEgamma<<", ("<<l<<","<<b<<")"<<endl;
 //			  galaxy.pi0_decay_HIR_hp_skymap[i_Ring][co][iEgamma] += emiss_HI[i_Ring][iEgamma] *w_HI +emiss_HII[i_Ring][iEgamma];//IMOS20080114*
                         galaxy.pi0_decay_HIR_hp_skymap[i_Ring][co][iEgamma] += emiss_HI[i_Ring][iEgamma] *w_HI;                            //IMOS20080114*
                         galaxy.pi0_decay_HII_hp_skymap[i_Ring][co][iEgamma] += emiss_HII[i_Ring][iEgamma];                                 //IMOS20080114*

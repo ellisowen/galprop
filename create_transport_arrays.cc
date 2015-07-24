@@ -610,23 +610,34 @@ int Galprop::create_transport_arrays(Particle &particle)
 
         if(galdef.convection==4) // constant radial (3D) wind until fermi dirac style shutoff
             {
-
+              // 3D radius 
               double r3 = sqrt(particle.x[ix]*particle.x[ix] + particle.y[iy]*particle.y[iy] + particle.z[iz]*particle.z[iz]);
-              // Shutoff with fermi dirac distribution of boundary 200 pc and and 2kpc stall height
-              double vr = galdef.v0_conv * 1/(exp((r3-2.)/.2)+1);
+              // Shut off wind with fermi dirac distribution with stall transition-width 200 pc and and 2 kpc stall height
+              double vr = 0; 
+              if (r3<4.){
+                 vr = galdef.v0_conv * 1/(exp((r3-2.)/.2)+1);
+              }
+              if (isnan(vr)){
+                cout << "x,y,z ---- r3, vr : " << particle.x[ix] << ", " << particle.y[iy] << ", " << particle.z[iz] << " -------- " << r3 << ", " << vr << endl;
+              }
 
-              double v_conv_x = particle.x[ix]/r3*vr;
-              double v_conv_y = particle.y[iy]/r3*vr;
-              double v_conv_z = particle.z[iz]/r3*vr;
-
-              particle.v_conv_x.d3[ix][iy][iz].s[ip] =  v_conv_x ;
-              particle.v_conv_y.d3[ix][iy][iz].s[ip] =  v_conv_y ;
-              particle.v_conv_z.d3[ix][iy][iz].s[ip] =  v_conv_z ;
-    
+              if (r3!=0) { 
+                // Assign v_conv_i 
+                particle.v_conv_x.d3[ix][iy][iz].s[ip] =  particle.x[ix]/r3*vr;
+                particle.v_conv_y.d3[ix][iy][iz].s[ip] =  particle.y[iy]/r3*vr;
+                particle.v_conv_z.d3[ix][iy][iz].s[ip] =  particle.z[iz]/r3*vr;
+              }
+              else{
+                // Assign v_conv_i 
+                particle.v_conv_x.d3[ix][iy][iz].s[ip] =  vr;
+                particle.v_conv_y.d3[ix][iy][iz].s[ip] =  vr;
+                particle.v_conv_z.d3[ix][iy][iz].s[ip] =  vr;
+              }
             }
 
 	      }  // p
     } 
+
 
   if(galdef.verbose==-504) // selectable debug
     {
